@@ -1,7 +1,7 @@
 import Joi from 'joi'
 import { getDB } from '@/config/mongodb'
 
-
+const { ObjectID } = require('mongodb');
 const columnCollectName = 'columns'
 const columnCollectSchema = Joi.object({
   boardId : Joi.string().required(),
@@ -27,4 +27,22 @@ const createNew = async(data) => {
   }
 }
 
-export const ColumnModel = { createNew }
+const update = async(id, data) => {
+  try {
+    const result = await getDB().collection(columnCollectName).findOneAndUpdate(
+      { _id: ObjectId(id) },
+      { $set: data },
+      { returnOriginal: false }
+    )
+    console.log(result)
+    return result.value
+  }
+  catch (error) {
+    throw new Error(error)
+  }
+}
+
+export const ColumnModel = {
+  createNew,
+  update
+}

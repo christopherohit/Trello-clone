@@ -20,4 +20,26 @@ const createNew = async(req, res, next) => {
 }
 
 
-export const ColumnValidation = { createNew }
+const update = async(req, res, next) => {
+  const Conditions = Joi.object({
+    title : Joi.string().min(3).max(20).trim()
+  })
+
+  try {
+    await Conditions.validateAsync(req.body, {
+      aborlyEarly : false,
+      allowUnknown : true
+    })
+    next()
+  }
+  catch (error) {
+    res.status(HttpStatusCode.BAD_REQUEST).json({
+      errors : new Error(error).message
+    })
+  }
+}
+
+export const ColumnValidation = {
+  createNew,
+  update
+}
